@@ -1,58 +1,43 @@
 <script setup>
-// Composition API
-import { ref, computed, onMounted } from 'vue';
+import { ref } from 'vue';
 
-const bankBalance = ref(100);
-const name = ref('Kimani');
+const user = ref({
+  email: null,
+  password: null
+});
 
-// note: whatever you pass in ref is the initial value of that variable
-// note: when you pass a reactive value inside another ref, it is unwrapped
-const balanceInKES = computed(() => bankBalance.value * 130.5);
-const statement = computed(() => `${name.value}'s bank balance is USD ${bankBalance.value}`);
+const isLoggedIn = ref(false);
+const emailVerified = ref(false);
 
-function increaseBalance() {
-  bankBalance.value += 20;
-}
-
-function updateName(first, last) {
-  name.value = `${first} ${last}`;
-}
-
-// vue depends on Javascript proxies to handle reactivity
-const person = {
-  name: 'Kimani',
-  age: 55
-};
-
-let proxy = new Proxy(person, {
-  get() {
-    // update the DOM
-    console.log('We are accessing a property in the person object');
-    return 'Different thing';
-  },
-  set() {
-    // update the DOM
-    // return new value
-    return '';
+function login() {
+  if (user.value.email && user.value.password) {
+    isLoggedIn.value = true;
+    return;
   }
-});
+  alert('Please fill in all the fields');
+}
 
-console.log(proxy.name);
-
-onMounted(() => {
-  console.log('The component has been mounted');
-});
+function verifyEmail() {
+  emailVerified.value = true;
+}
 </script>
-
 <template>
   <div>
-    <h1>Reactivity</h1>
-    <!-- State unwrapping -->
-    <p>USD: {{ bankBalance }}</p>
-    <p>KES: {{ balanceInKES }}</p>
+    {{ isLoggedIn }}
+    <h1>Conditional Rendering</h1>
+    <form @submit.prevent="login" v-if="!isLoggedIn">
+      <input type="email" placeholder="Email Address" v-model="user.email" /> <br />
+      <input type="password" placeholder="Password" v-model="user.password" /> <br />
+      <input type="submit" value="Login" />
+    </form>
 
-    <h5>{{ statement }}</h5>
-    <button @click="increaseBalance">Pay Me!!</button>
-    <button @click="updateName('David', 'Kimani')">Update Name</button>
+    <!-- email verification -->
+    <div v-else-if="!emailVerified">
+      <h2>Your email is not verified. Verify your email to continue</h2>
+      <button @click="verifyEmail">Verify email</button>
+    </div>
+
+    <!-- Dashboard -->
+    <h2 v-else>Welcome to your dashboard</h2>
   </div>
 </template>
