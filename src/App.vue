@@ -1,43 +1,53 @@
 <script setup>
 import { ref } from 'vue';
 
-const user = ref({
-  email: null,
-  password: null
+const form = ref({
+  name: '',
+  isDeveloper: false,
+  stacks: [],
+  languages: [],
+  school: ''
 });
 
-const isLoggedIn = ref(false);
-const emailVerified = ref(false);
-
-function login() {
-  if (user.value.email && user.value.password) {
-    isLoggedIn.value = true;
-    return;
-  }
-  alert('Please fill in all the fields');
-}
-
-function verifyEmail() {
-  emailVerified.value = true;
-}
+// get school from the DOM and listen to change/input events
+const schoolInput = document.getElementById('school');
+schoolInput?.addEventListener('input', (e) => {
+  form.value.school = e.target.value;
+});
 </script>
+
 <template>
   <div>
-    {{ isLoggedIn }}
-    <h1>Conditional Rendering</h1>
-    <form @submit.prevent="login" v-if="!isLoggedIn">
-      <input type="email" placeholder="Email Address" v-model="user.email" /> <br />
-      <input type="password" placeholder="Password" v-model="user.password" /> <br />
-      <input type="submit" value="Login" />
+    {{ form }}
+    <form>
+      <!-- Text value -->
+      <input type="text" placeholder="Full Name" v-model="form.name" /> <br />
+
+      <!-- Boolean value -->
+      <label for="">Are you a developer?</label>
+      <input type="checkbox" v-model="form.isDeveloper" /> <br />
+
+      <!-- multi select checkbox -->
+      <label for="">Which stacks are you familiar with?</label> <br />
+      <label for="">MERN stack</label>
+      <input type="checkbox" value="MERN" v-model="form.stacks" /> <br />
+      <label for="">TALL stack</label>
+      <input type="checkbox" value="TALL" v-model="form.stacks" /> <br />
+      <label for="">MEAN stack</label>
+      <input type="checkbox" value="MEAN" v-model="form.stacks" /> <br />
+
+      <!-- Multi select dropdown -->
+      <label for="">Which Language do you normally use?</label>
+      <select v-model="form.languages" multiple>
+        <!-- For multiple selections hold down CTRL -->
+        <option value="js">Javascript</option>
+        <option value="java">Java</option>
+        <option value="dart">Dart</option>
+      </select>
+      <br />
+
+      <!-- input with a lazy modifier -->
+      <input type="text" placeholder="School" v-model.lazy="form.school" />
     </form>
-
-    <!-- email verification -->
-    <div v-else-if="!emailVerified">
-      <h2>Your email is not verified. Verify your email to continue</h2>
-      <button @click="verifyEmail">Verify email</button>
-    </div>
-
-    <!-- Dashboard -->
-    <h2 v-else>Welcome to your dashboard</h2>
   </div>
 </template>
