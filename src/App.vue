@@ -1,43 +1,82 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref, watch, watchEffect } from 'vue';
 
+const age = ref(0);
 const user = ref({
-  email: null,
-  password: null
+  name: 'Kimani',
+  age: 70,
+  location: {
+    address: 'bla bla bla',
+    something: {
+      anything: ''
+    }
+  }
 });
 
-const isLoggedIn = ref(false);
-const emailVerified = ref(false);
+const x = ref(10);
+const y = ref(20);
 
-function login() {
-  if (user.value.email && user.value.password) {
-    isLoggedIn.value = true;
-    return;
+function increaseAge() {
+  age.value++;
+}
+
+// function changeUserDetails(userDetails) {
+//   user.value = {
+//     ...user.value,
+//     ...userDetails
+//   };
+// }
+
+function changeName() {
+  user.value.name = 'Levin';
+}
+
+function changeSomething() {
+  user.value.location.something = 'Something new';
+}
+
+watch(age, (newAge, oldAge) => {
+  console.log(oldAge, newAge);
+  if (newAge >= 18) console.log('You are an adult!');
+});
+
+watch(user, (newUser) => {
+  console.log(newUser);
+});
+
+watch(
+  () => user.value.location.something,
+  (newSomething) => {
+    console.log(newSomething);
+    console.log('Something has changed');
   }
-  alert('Please fill in all the fields');
-}
+);
 
-function verifyEmail() {
-  emailVerified.value = true;
-}
+// watching multiple reactive variables
+watch([x, y], ([a, b]) => {
+  console.log(a, b);
+  // try to use something I am not watching
+  // console.log(user.value);
+});
+
+// watch effect
+watchEffect(() => {
+  const addition = x.value + y.value;
+  console.log(addition);
+});
+
+onMounted(() => {
+  setTimeout(() => {
+    x.value = 100;
+    y.value = 200;
+  }, 3000);
+});
 </script>
 <template>
   <div>
-    {{ isLoggedIn }}
-    <h1>Conditional Rendering</h1>
-    <form @submit.prevent="login" v-if="!isLoggedIn">
-      <input type="email" placeholder="Email Address" v-model="user.email" /> <br />
-      <input type="password" placeholder="Password" v-model="user.password" /> <br />
-      <input type="submit" value="Login" />
-    </form>
-
-    <!-- email verification -->
-    <div v-else-if="!emailVerified">
-      <h2>Your email is not verified. Verify your email to continue</h2>
-      <button @click="verifyEmail">Verify email</button>
-    </div>
-
-    <!-- Dashboard -->
-    <h2 v-else>Welcome to your dashboard</h2>
+    <h1>{{ age }}</h1>
+    <button @click="increaseAge">Increase Age</button> <br />
+    {{ user }} <br />
+    <button @click="changeSomething">Change Something</button>
   </div>
 </template>
