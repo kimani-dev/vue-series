@@ -4,7 +4,8 @@ import { ref } from 'vue';
 
 const isLoggedIn = ref(false);
 
-function login() {
+function login(data) {
+  console.log(data);
   isLoggedIn.value = true;
 }
 </script>

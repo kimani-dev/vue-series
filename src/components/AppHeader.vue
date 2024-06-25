@@ -4,7 +4,19 @@ defineProps({
   title: String
 });
 
-defineEmits(['login-click']);
+const emit = defineEmits({
+  // validationg the additional data
+  loginClick: ({ data }) => !!data
+});
+
+const additionalData = {
+  x: 1,
+  y: 2
+};
+
+function login() {
+  emit('login-click', additionalData);
+}
 </script>
 
 <template>
@@ -15,7 +27,8 @@ defineEmits(['login-click']);
       <a href="">About</a>
       <a href="">Contact</a>
     </div>
-    <button @click="$emit('login-click')">Login</button>
+    <!-- <button @click="$emit('login-click', additionalData)">Login</button> -->
+    <button @click="login">Login</button>
   </nav>
 </template>
 
